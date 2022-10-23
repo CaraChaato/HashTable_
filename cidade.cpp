@@ -3,22 +3,16 @@
 typedef float latitude;
 typedef float longitude;
 
-/**
- * 1/4 do espaço será utilizado para a tabela Hash
- * -> 0 ~ 255
- * Os 3/4 restantes do espaço serão empregados para o tratamento de colisão
- * -> 256 ~ 1023
- */
-#define SIZE 1024
-
 // A estrutura cidade contém um estado, uma cidade, e seu id do banco de dados
 struct cidade {
+    unsigned int id; // ID
     char *estado; // UF do estado
     char *cidade; // Nome da cidade
 };
 
 // A estrutura gps contém a latitude, longitude e id de uma cidade
 struct gps {
+    unsigned int id; // ID
     latitude la; // Latitude da cidade 
     longitude lo; // Longitude da cidade
 };

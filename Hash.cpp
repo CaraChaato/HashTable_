@@ -7,6 +7,14 @@
 #include <stdlib.h> // Emulador do prompt do sistema 
 
 /**
+ * 1/4 do espaço será utilizado para a tabela Hash
+ * -> 0 ~ 255
+ * Os 3/4 restantes do espaço serão empregados para o tratamento de colisão
+ * -> 256 ~ 1023
+ */
+#define SIZE 1024
+
+/**
  * Criação de um vetor de ponteiros chamado 'hash' do tipo dataItem
  * Essa variável será a própria Tabela Hash
  */
