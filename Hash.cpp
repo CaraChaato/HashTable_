@@ -101,9 +101,9 @@ int divisao(dataItem *d) {
     return d->key % (SIZE/4);
 }
 
+
 // Varíavel de um número inteiro bem bem grande e sem sinal
 typedef unsigned long long int bigNumber; 
-
 
 /**
  * Função Hash de Multiplicação
@@ -124,3 +124,13 @@ int multiplicacao(dataItem *d) {
     // Vontade de chorar lendo isso (*>﹏<*)
 }
 #endif
+
+void printHash(hash dado){
+    for (int i = 0; i < 10; i++) {
+        if(dado[i] == 0){
+            printf("     === Linha Vazia ===\n");
+        }else{   
+            printf(" = %d =\n %s - %s\n %.2f - %.2f\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
+        }
+    }
+}

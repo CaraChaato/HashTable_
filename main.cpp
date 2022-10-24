@@ -8,8 +8,16 @@ int main() {
     gps *locais = getGps(arquivo2);
     dataItem *d = getItens(cities, locais);
 
+    hash H;
+    init(H);
+    
+    // N tô sem conseguindo inserir
+    inserir(H, d, divisao);
+    inserir(H, d, divisao);
+    inserir(H, d, divisao);
+    inserir(H, d, divisao);
 
-    printData(d);
+    printHash(H);
 
     return 0;
 }
