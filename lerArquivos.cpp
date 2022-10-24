@@ -4,68 +4,107 @@
 #include "cidade.cpp" // Estrutura da cidade
 #define MAX 5570
 
-dataItem *getItens(char *arquivo, char *localizacoes){
+/**
+ * @brief Recebe as Estruturas City e Gps, e retorna uma estrutura dataItem
+ * @param cities 
+ * @param local 
+ * @return dataItem* 
+ */
+dataItem *getItens(cidade *cities, gps *local) {
+    // Cria um dataItem do tamanho MAX
     dataItem *dados = (dataItem *)malloc(MAX * sizeof(dataItem));
+    int k = 0;
 
-    FILE *fCity = fopen(arquivo, "r"); // Lê um arquivo
-    cidade *cidades = (cidade *)malloc(MAX * sizeof(cidade)); // Ponteiro do tipo cidade
-    if (!fCity) { // Indica um erro caso o arquivo não consiga ser aberto
-        perror("Arquivo Legenda nao encontrado!\n");
-        return NULL;
-    }
-    FILE *fGps = fopen(localizacoes, "r");
-    gps *local = (gps *)malloc(MAX * sizeof(gps));
-    if (!fGps) { // Apresenta um erro caso não consiga abrir o arquivo
-        perror("Arquivo Coordenadas nao encontrado!\n");
-        return NULL;
-    }
-    fscanf(fCity, "CODIGO MUNICIPIO;UF;NOME MUNICIPIO"); // Limpa a leitura da primeira linha do arquivo Cidade
-    fscanf(fGps, "CODIGO MUNICIPIO;LATITUDE;LONGITUDE"); // Limpa a leitura da primeira linha do arquivo GPS
-
-    // Variáveis Auxiliares
-    latitude la; // Latitude
-    longitude lo; // Longitude
-    char *uf; // Ponteiro auxiliar para o Estado
-    char *cid; // Ponteiro auxiliar para a Cidade
-    int idC, idG, i = 0, k = 0 ,j = 0;
-
-    for(i = 0; i < MAX; i++){
-        uf = (char *)malloc(2 * sizeof(char)); // Aloca o estado
-        cid = (char *)malloc(40 * sizeof(char)); // Aloca a Cidade
-        fscanf(fCity, "%d %s ", &idC, uf); // Lê o ID e o estado
-        fgets(cid, 40 * sizeof(char), fCity); // Lê o nome da cidade
-        fscanf(fGps, "%u;%f;%f", &idG, &la, &lo); // Lê os dados do GPS
-        
-        /**
-         *  Escreve as informações na estrutura
-         */
-        cidades[i].estado = uf; // Escreve o Estado
-        cidades[i].cidade = cid; // Escreve o Nome da cidade
-        cidades[i].id = idC; // ID da cidade
-        local[i].la = la; // Escreve a Latitude
-        local[i].lo = lo; // Escreve a Longitude
-        local[i].id = idG; // ID do GPS
-        
-        //printf("%d -> %d %s %s\n -> %d %.2f %.2f\n\n", i, cidades[i].id, cidades[i].cidade, cidades[i].estado, local[i].id, local[i].la, local[i].lo);
-    }
-    for (i = 0; i < MAX; i++) {
-        for (j = 0; j < MAX; j++) {
-            if(cidades[i].id == local[j].id){
-                dados[k].key = cidades[i].id;
-                dados[k].city = cidades[i];
+    // Organiza as estruturas que foram recebidas com base no id
+    for (size_t i = 0; i < MAX; i++) {
+        dados[k].key = cities[i].id;
+        for (size_t j = 0; j < MAX; j++) {
+            if (cities[i].id == local[j].id) {
+                dados[k].city = cities[i];
                 dados[k].GPS = local[j];
                 k++;
+                break;
             }
         }
-        printf("%d -> %d %s %s %.2f %.2f\n\n\n", i, dados[i].key, dados[i].city.cidade, dados[i].city.estado, dados[i].GPS.la, dados[i].GPS.lo);
     }
+    return dados;
 }
 
 /**
- * @brief 
- * // Função que imprime todos os dados de uma cidade
- * @param dados 
+ * @brief Lê o arquivo passado como parametro e retorna uma estrutura City
+ * @param arquivo 
+ * @return cidade* 
  */
-void printDataItens(dataItem *dados, int i) {
-    printf("%d %d %s %.2f %.2f %s", dados[i].key, dados[i].city.estado, dados[i].GPS.la, dados[i].GPS.lo, dados[i].city.cidade);
+cidade *getCidades(char *arquivo) {
+    // Abre o arquivo
+    FILE *f = fopen(arquivo, "r");
+    cidade *cidades = (cidade *)malloc(MAX * sizeof(cidade));
+    // Informa se o arquivo não for aberto
+    if (!f) {
+        perror("Arquivo Legenda não encontrado!\n");
+        return NULL;
+    }
+    // Limpa a primeira linha de leitura do arquivo
+    fscanf(f, "CODIGO MUNICIPIO;UF;NOME MUNICIPIO");
+    unsigned int cod;
+    char *uf;
+    char *cid;
+    int i = 0;
+    // Percore o arquivo salvando as informações 
+    while (!feof(f)) {
+        uf = (char *)malloc(2 * sizeof(char));
+        cid = (char *)malloc(40 * sizeof(char));
+        fscanf(f, "%d %s ", &cod, uf);
+        fgets(cid, 40 * sizeof(char), f);
+
+        //printf("%d %s %s", cod, uf, cid);
+
+        cidades[i].id = cod; // ID da cidade
+        cidades[i].estado = uf; // Estado
+        cidades[i].cidade = cid; // Cidade
+        i++;
+    }
+    return cidades; // Retorna a estrutura
+}
+
+/**
+ * @brief Lê o arquivo passado como parametro e retorna uma estrutura Gps
+ * @param localizacoes 
+ * @return gps* 
+ */
+gps *getGps(char *localizacoes) {
+    // Abre o arquivo
+    FILE *f = fopen(localizacoes, "r");
+    gps *local = (gps *)malloc(MAX * sizeof(gps));
+    // Informa se o arquivo não for aberto
+    if (!f) {
+        perror("Arquivo Coordenadas nao encontrado!\n");
+        return NULL;
+    }
+    // Limpa a primeira linha de leitura do arquivo
+    fscanf(f, "CODIGO MUNICIPIO;LATITUDE;LONGITUDE");
+    unsigned int cod;
+    latitude la;
+    longitude lo;
+    int i = 0;
+    // Percore o arquivo salvando as informações
+    while (!feof(f)) {
+        fscanf(f, "%u;%f;%f", &cod, &la, &lo);
+
+        //printf("%u;%.2f;%.2f\n", cod, la, lo);
+
+        local[i].id = cod; // Id do local
+        local[i].la = la; // Latitude
+        local[i].lo = lo; // Longitude
+        i++;
+    }
+
+    return local;
+}
+
+// Imprime uma estrutura dataItem
+void printData(dataItem *dado){
+    for (int i = 0; i < MAX; i++) {
+        printf("%d -> %d %s %s %.2f %.2f\n\n\n", i, dado[i].key, dado[i].city.cidade, dado[i].city.estado, dado[i].GPS.la, dado[i].GPS.lo);
+    }
 }

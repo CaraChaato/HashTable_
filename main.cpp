@@ -3,10 +3,13 @@
 
 int main() {
     char *arquivo1 = (char *)"bancoDeDados/legenda.txt";
+    cidade *cities = getCidades(arquivo1);
     char *arquivo2 = (char *)"bancoDeDados/coordenadas.csv";
-    dataItem *d = getItens(arquivo1, arquivo2);
-    hash H;
+    gps *locais = getGps(arquivo2);
+    dataItem *d = getItens(cities, locais);
 
+
+    printData(d);
 
     return 0;
 }
