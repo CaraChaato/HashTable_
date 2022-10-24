@@ -14,9 +14,8 @@ int main() {
     for (int i = 0; i < SIZE; i++) {
         inserir(H, d+i, divisao);
     }  
-    remover(H, d+2, divisao);
-    
     printHash(H);
 
+    buscar(H, 110003, divisao);
     return 0;
 }

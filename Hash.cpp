@@ -60,6 +60,7 @@ int inserir(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
                 break;
             }
         }
+        return 0; // Retorna 0 se der certo
     }
     return -1; // Retorna -1 se der errado
 }
@@ -76,14 +77,33 @@ int remover(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
     // Variável inteira que irá receber o resultado da função Hash
     int key = funcHash(d);
     // Se a estrutura estiver ocupada, o espaço será liberado
-    if (H[key] != 0) {
+
+    if (H[key] == 0) {
+        return -1;
+    }
+    else if (H[key]->key == -1) {
+        for (int i = (SIZE/4); i < SIZE; i++) {
+            if (H[i] == 0) {
+                return -1;
+            }
+            else if (H[i]->key == d->key){
+                dataItem *purge = H[i];
+                free(purge);
+                H[i] = 0;
+                H[i]->key = -1;
+                return 0;
+            }
+        }
+    }
+    else if (H[key] != 0 && H[key]->key != -1){
         dataItem *purge = H[key];
         // delete purge; //linux
         free(purge); //windows, linux
         H[key] = 0;
-        return 0; // Retorna 0 se der certo
+        H[key]->key = -1;
+        return 0;
     }
-    return -1; // Retorna -1 se der errado
+    return -1;
 }
 
 /**
@@ -110,7 +130,7 @@ dataItem *buscar(hash H, int key, int (*funcHash)(dataItem *)){
  */
 int divisao(dataItem *d) {
     // O corpo principal da tabela será até a posição 255, o restante será para tratamento
-    return d->key % SIZE/4;
+    return d->key % (SIZE/4);
 }
 
 
