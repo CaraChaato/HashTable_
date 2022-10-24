@@ -12,7 +12,7 @@
  * Os 3/4 restantes do espaço serão empregados para o tratamento de colisão
  * -> 256 ~ 1023
  */
-#define SIZE 1024
+#define SIZE 16
 
 /**
  * Criação de um vetor de ponteiros chamado 'hash' do tipo dataItem
@@ -45,9 +45,21 @@ int inserir(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
     dataItem *copy = (dataItem*)malloc(sizeof(dataItem));
     *copy = *d;
     // Se a estrutura estiver vazia, a cópia do item será guardada nela
-    if (H[key] == 0) {
+    if (H[key] == 0 || H[key]->key == -1) {
         H[key] = copy;
         return 0; // Retorna 0 se der certo
+    }
+    /**
+     * Tratamento de Colisão Encadeado Interior
+     * Ele basicamente usa uma parte da tabela como um vetor normal para alocar estruturas que tenham colidido
+     */
+    else{
+        for(int i = (SIZE/4); i < SIZE; i++){
+            if(H[i] == 0 || H[i]->key == -1){
+                H[i] = copy;
+                break;
+            }
+        }
     }
     return -1; // Retorna -1 se der errado
 }
@@ -98,7 +110,7 @@ dataItem *buscar(hash H, int key, int (*funcHash)(dataItem *)){
  */
 int divisao(dataItem *d) {
     // O corpo principal da tabela será até a posição 255, o restante será para tratamento
-    return d->key % (SIZE/4);
+    return d->key % SIZE/4;
 }
 
 
@@ -126,11 +138,20 @@ int multiplicacao(dataItem *d) {
 #endif
 
 void printHash(hash dado){
-    for (int i = 0; i < 10; i++) {
+    printf(" == CORPO PRINCIPAL DA TABELA HASH == \n\n");
+    for (int i = 0; i < (SIZE/4); i++) {
         if(dado[i] == 0){
-            printf("     === Linha Vazia ===\n");
+            printf("\n     === Linha Vazia ===\n\n");
         }else{   
-            printf(" = %d =\n %s - %s\n %.2f - %.2f\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
+            printf(" = %d =\n %s - %s %.2f - %.2f\n\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
+        }
+    }
+    printf("\n == TRATAMENTO DE COLISAO == \n\n");
+    for (int i = (SIZE/4); i < SIZE; i++) {
+        if(dado[i] == 0){
+            printf("\n     === Linha Vazia ===\n\n");
+        }else{   
+            printf(" = %d =\n %s - %s %.2f - %.2f\n\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
         }
     }
 }

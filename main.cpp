@@ -11,12 +11,11 @@ int main() {
     hash H;
     init(H);
     
-    // N tô sem conseguindo inserir
-    inserir(H, d, divisao);
-    inserir(H, d, divisao);
-    inserir(H, d, divisao);
-    inserir(H, d, divisao);
-
+    for (int i = 0; i < SIZE; i++) {
+        inserir(H, d+i, divisao);
+    }  
+    remover(H, d+2, divisao);
+    
     printHash(H);
 
     return 0;
