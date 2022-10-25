@@ -95,10 +95,12 @@ int remover(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
                 dataItem *purge = H[i];
                 free(purge);
                 H[i] = 0;
-                // Para posições que foram limpas, será adicionada a chave de item -1
 
-                //H[i]->key = -1; // Pq não consigo dar um valor a essa chave? <-------
-                
+                // Para posições que foram limpas, será adicionada a chave de item -1
+                // Perguntar se essa parte tá bem feita 
+                dataItem *aux = (dataItem*) malloc(sizeof(dataItem));
+                aux->key = -1;
+                H[key] = aux;
                 return 0;
             }
         }
@@ -113,10 +115,12 @@ int remover(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
         // delete purge; //linux
         free(purge); //windows, linux
         H[key] = 0;
+
         // Sem esquecer de adicionar a chave -1 que avisa se a posisão já foi apagada alguma vez
-        
-        //H[key]->key = -1; // Pq não consigo dar um valor a essa chave? <------- 
-        
+        // Perguntar se essa parte tá bem feita 
+        dataItem *aux = (dataItem*) malloc(sizeof(dataItem));
+        aux->key = -1;
+        H[key] = aux;
         return 0;
     }
     return -1; // Retorna -1 no caso de um erro (tem q ser um erro bem estranho pra n se encaixar em nenhuma das condições)
@@ -176,19 +180,31 @@ int multiplicacao(dataItem *d) {
  * @param dado 
  */
 void printHash(hash dado){
-    printf(" == CORPO PRINCIPAL DA TABELA HASH == \n\n");
+    printf("\n == CORPO PRINCIPAL DA TABELA HASH == \n\n\n");
     for (int i = 0; i < (SIZE/4); i++) {
         if(dado[i] == 0){
-            printf("\n     === Linha Vazia ===\n\n");
-        }else{   
+            printf("     === SLOT VAZIO ===\n\n");
+        }
+        
+        if(dado[i]->key == -1){
+            printf("     === SLOT APAGADO ===\n\n");
+        }
+        
+        else{   
             printf(" = %d =\n %s - %s %.2f - %.2f\n\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
         }
     }
-    printf("\n == TRATAMENTO DE COLISAO == \n\n");
+    printf("\n\n == TRATAMENTO DE COLISAO == \n\n\n");
     for (int i = (SIZE/4); i < SIZE; i++) {
         if(dado[i] == 0){
-            printf("\n     === Linha Vazia ===\n\n");
-        }else{   
+            printf("     === SLOT VAZIO ===\n\n");
+        }
+        
+        if(dado[i]->key == -1){
+            printf("     === SLOT APAGADO ===\n\n");
+        }
+        
+        else{   
             printf(" = %d =\n %s - %s %.2f - %.2f\n\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
         }
     }

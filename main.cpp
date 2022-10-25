@@ -17,6 +17,7 @@ int main() {
     //printData(d);
     remover(H, d, divisao);
     printHash(H);
-
+    inserir(H, d, divisao);
+    printHash(H);
     return 0;
 }
