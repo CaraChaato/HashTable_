@@ -76,34 +76,47 @@ int inserir(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
 int remover(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
     // Variável inteira que irá receber o resultado da função Hash
     int key = funcHash(d);
-    // Se a estrutura estiver ocupada, o espaço será liberado
 
+    // Se a estrutura estiver vazia, ele retorna -1
     if (H[key] == 0) {
         return -1;
     }
+    /**
+     * Se a chave da estrutura for igual a -1, quer dizer
+     * que ela foi excluida e que o dado a ser apagado 
+     * pode estar na parte do tratamento de colisão.
+     */
     else if (H[key]->key == -1) {
-        for (int i = (SIZE/4); i < SIZE; i++) {
-            if (H[i] == 0) {
+        for (int i = (SIZE/4); i < SIZE; i++) { // Percorre a área do tratamento
+            if (H[i] == 0) { // Se a estrutura na posisão i da tabela estiver vazia, retorna -1
                 return -1;
             }
-            else if (H[i]->key == d->key){
+            else if (H[i]->key == d->key){ // Se não ele checa se a chave bate com a que deve ser apagada
+                // Apaga os dados da posição
                 dataItem *purge = H[i];
                 free(purge);
                 H[i] = 0;
+                // Para posições que foram limpas, será adicionada a chave de item -1
                 H[i]->key = -1;
                 return 0;
             }
         }
     }
+    /**
+     * Se a chave não for -1, 
+     * eu checo se a posição está preenchida e se a chave do item é diferente de -1
+     */
     else if (H[key] != 0 && H[key]->key != -1){
+        // No caso da posisão da lista da tabela comum estiver ocupada, eu limpo
         dataItem *purge = H[key];
         // delete purge; //linux
         free(purge); //windows, linux
         H[key] = 0;
+        // Sem esquecer de adicionar a chave -1 que avisa se a posisão já foi apagada alguma vez
         H[key]->key = -1;
         return 0;
     }
-    return -1;
+    return -1; // Retorna -1 no caso de um erro (tem q ser um erro bem estranho pra n se encaixar em nenhuma das checagens)
 }
 
 /**
