@@ -31,7 +31,6 @@ void init(hash &H) {
 }
 
 /**
- * @brief 
  * Função que Insere um Elemento na Tabela 
  * @param H 
  * @param d 
@@ -44,6 +43,7 @@ int inserir(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
     // Cópia do item que será inserido
     dataItem *copy = (dataItem*)malloc(sizeof(dataItem));
     *copy = *d;
+
     // Se a estrutura estiver vazia, a cópia do item será guardada nela
     if (H[key] == 0 || H[key]->key == -1) {
         H[key] = copy;
@@ -66,7 +66,6 @@ int inserir(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
 }
 
 /**
- * @brief 
  * Função que Remove um Elemento da Tabela
  * @param H 
  * @param d 
@@ -97,7 +96,9 @@ int remover(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
                 free(purge);
                 H[i] = 0;
                 // Para posições que foram limpas, será adicionada a chave de item -1
-                H[i]->key = -1;
+
+                //H[i]->key = -1; // Pq não consigo dar um valor a essa chave? <-------
+                
                 return 0;
             }
         }
@@ -113,21 +114,22 @@ int remover(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
         free(purge); //windows, linux
         H[key] = 0;
         // Sem esquecer de adicionar a chave -1 que avisa se a posisão já foi apagada alguma vez
-        H[key]->key = -1;
+        
+        //H[key]->key = -1; // Pq não consigo dar um valor a essa chave? <------- 
+        
         return 0;
     }
-    return -1; // Retorna -1 no caso de um erro (tem q ser um erro bem estranho pra n se encaixar em nenhuma das checagens)
+    return -1; // Retorna -1 no caso de um erro (tem q ser um erro bem estranho pra n se encaixar em nenhuma das condições)
 }
 
 /**
- * @brief 
  * Função que busca um elemento em uma posição da Tabela
  * @param H 
  * @param key 
  * @param funcHash 
  * @return dataItem* 
  */
-dataItem *buscar(hash H, int key, int (*funcHash)(dataItem *)){
+dataItem *buscar(hash H, int key, int (*funcHash)(dataItem *)){ // Ainda falta ajeitar
     dataItem *res = (dataItem*)malloc(sizeof(dataItem));
     res->key = key;
     int pos = funcHash(res);
@@ -136,7 +138,6 @@ dataItem *buscar(hash H, int key, int (*funcHash)(dataItem *)){
 }
 
 /**
- * @brief 
  * Função Hash da Divisão
  * @param d 
  * @return int 
@@ -170,6 +171,10 @@ int multiplicacao(dataItem *d) {
 }
 #endif
 
+/**
+ * Função que imprime a tabela Hash
+ * @param dado 
+ */
 void printHash(hash dado){
     printf(" == CORPO PRINCIPAL DA TABELA HASH == \n\n");
     for (int i = 0; i < (SIZE/4); i++) {

@@ -14,9 +14,9 @@ int main() {
     for (int i = 0; i < SIZE; i++) {
         inserir(H, d+i, divisao);
     }  
-
-    //remover(H, d, divisao);
+    //printData(d);
+    remover(H, d, divisao);
     printHash(H);
-    
+
     return 0;
 }
