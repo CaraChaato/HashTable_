@@ -15,6 +15,7 @@ int main() {
         inserir(H, d+i, divisao);
     }  
     //printHash(H);
+    
     // Alguns testes 
     int key = buscar(H, 110007, divisao);
     printItem(H,key);
