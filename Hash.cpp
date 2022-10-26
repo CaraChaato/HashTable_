@@ -5,7 +5,6 @@
 #include <math.h> // Biblioteca para operações matemáticas
 #include <stdio.h> // Entrada e Saída de Dados
 #include <stdlib.h> // Emulador do prompt do sistema 
-
 /**
  * 1/4 do espaço será utilizado para a tabela Hash
  * -> 0 ~ 255
@@ -66,80 +65,75 @@ int inserir(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
 }
 
 /**
- * Função que Remove um Elemento da Tabela
- * @param H 
- * @param d 
- * @param funcHash 
- * @return int 
- */
-int remover(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
-    // Variável inteira que irá receber o resultado da função Hash
-    int key = funcHash(d);
-
-    // Se a estrutura estiver vazia, ele retorna -1
-    if (H[key] == 0) {
-        return -1;
-    }
-    /**
-     * Se a chave da estrutura for igual a -1, quer dizer
-     * que ela foi excluida e que o dado a ser apagado 
-     * pode estar na parte do tratamento de colisão.
-     */
-    else if (H[key]->key == -1) {
-        for (int i = (SIZE/4); i < SIZE; i++) { // Percorre a área do tratamento
-            if (H[i] == 0) { // Se a estrutura na posisão i da tabela estiver vazia, retorna -1
-                return -1;
-            }
-            else if (H[i]->key == d->key){ // Se não ele checa se a chave bate com a que deve ser apagada
-                // Apaga os dados da posição
-                dataItem *purge = H[i];
-                free(purge);
-                H[i] = 0;
-
-                // Para posições que foram limpas, será adicionada a chave de item -1
-                // Perguntar se essa parte tá bem feita 
-                dataItem *aux = (dataItem*) malloc(sizeof(dataItem));
-                aux->key = -1;
-                H[key] = aux;
-                return 0;
-            }
-        }
-    }
-    /**
-     * Se a chave não for -1, 
-     * eu checo se a posição está preenchida e se a chave do item é diferente de -1
-     */
-    else if (H[key] != 0 && H[key]->key != -1){
-        // No caso da posisão da lista da tabela comum estiver ocupada, eu limpo
-        dataItem *purge = H[key];
-        // delete purge; //linux
-        free(purge); //windows, linux
-        H[key] = 0;
-
-        // Sem esquecer de adicionar a chave -1 que avisa se a posisão já foi apagada alguma vez
-        // Perguntar se essa parte tá bem feita 
-        dataItem *aux = (dataItem*) malloc(sizeof(dataItem));
-        aux->key = -1;
-        H[key] = aux;
-        return 0;
-    }
-    return -1; // Retorna -1 no caso de um erro (tem q ser um erro bem estranho pra n se encaixar em nenhuma das condições)
-}
-
-/**
  * Função que busca um elemento em uma posição da Tabela
  * @param H 
  * @param key 
  * @param funcHash 
  * @return dataItem* 
  */
-dataItem *buscar(hash H, int key, int (*funcHash)(dataItem *)){ // Ainda falta ajeitar
-    dataItem *res = (dataItem*)malloc(sizeof(dataItem));
-    res->key = key;
-    int pos = funcHash(res);
-    res = H[pos];
-    return res;
+int buscar(hash H, int chave, int (*funcHash)(dataItem *)){
+
+    // Checa se a chave do item está dentro dos critérios de busca
+    if (chave <= 0) {
+        printf("Chave Inválida para busca/n");
+        return(-1);
+    }
+
+    // Cria um item com a mesma chave pesquisada
+    dataItem *d = (dataItem*)malloc(sizeof(dataItem));
+    d->key = chave;
+    int key = funcHash(d); 
+
+    // Se a chave buscada estiver na possisão key, retorna a posição key
+    if (H[key]->key == d->key) {
+        free(d);
+        return key;
+    }
+    // Se a key for -1 ela irá buscar na segunda parte da tabela
+    else if (H[key] != 0) {
+        for (int i = (SIZE/4); i < SIZE; i++){
+            // Se chegar a uma posição vazia antes de achar, retorna -1 (erro)
+            if (H[i] == 0){
+                printf("\nItem não encontrado\n");
+                free(d);
+                return -1;
+            }
+            // Se achar a key em alguma das posições, retorna a posição i
+            else if (H[i]->key == d->key){
+                free(d);
+                return i;
+            }
+        }
+    }
+    // Em caso de erro
+    printf("\nItem não encontrado\n");
+    free(d);
+    return -1;
 }
+
+/**
+ * Função que Remove um Elemento da Tabela
+ * @param H 
+ * @param d 
+ * @param funcHash 
+ * @return int 
+ */
+int remover(hash H, int chave, int (*funcHash)(dataItem *)) {
+    int key = buscar(H, chave, funcHash); // Busco a posição do item na tabela
+    if(key == -1){
+        return -1;
+    }
+    // Apago o item de acordo com a posição
+    dataItem *purge = H[key]; // Purge vai receber a chave do item, e limpar o local
+    // delete purge; //linux
+    
+    free(purge); // windows e linux 
+    //H[key] = 0; // Queria fzr isso mas por algum motivo dá errado
+    H[key]->key = -1; // Apagar é uma palavra mt forte, tá mais pra sobrescrever
+    return 0; // Retorna 0 se der tudo certo
+}
+
+
 
 /**
  * Função Hash da Divisão
@@ -180,32 +174,44 @@ int multiplicacao(dataItem *d) {
  * @param dado 
  */
 void printHash(hash dado){
-    printf("\n == CORPO PRINCIPAL DA TABELA HASH == \n\n\n");
+    printf("\n  ==== CORPO PRINCIPAL DA TABELA HASH ====  \n\n\n");
     for (int i = 0; i < (SIZE/4); i++) {
         if(dado[i] == 0){
-            printf("     === SLOT VAZIO ===\n\n");
+            printf("       ====   SLOT VAZIO   ====\n\n");
         }
         
         if(dado[i]->key == -1){
-            printf("     === SLOT APAGADO ===\n\n");
+            printf("       ====  SLOT APAGADO  ====\n\n");
         }
         
         else{   
             printf(" = %d =\n %s - %s %.2f - %.2f\n\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
         }
     }
-    printf("\n\n == TRATAMENTO DE COLISAO == \n\n\n");
+    printf("\n\n  ====       TRATAMENTO DE COLISAO       ====\n\n\n");
     for (int i = (SIZE/4); i < SIZE; i++) {
         if(dado[i] == 0){
-            printf("     === SLOT VAZIO ===\n\n");
+            printf("       ====   SLOT VAZIO   ====\n\n");
         }
         
         if(dado[i]->key == -1){
-            printf("     === SLOT APAGADO ===\n\n");
+            printf("       ====  SLOT APAGADO  ====\n\n");
         }
         
         else{   
             printf(" = %d =\n %s - %s %.2f - %.2f\n\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
         }
+    }
+}
+
+void printItem(hash H, int key){
+    if(H[key] == 0){
+        printf("       ====   SLOT VAZIO   ====\n\n");
+    }
+    if(H[key]->key == -1){
+        printf("       ====  SLOT APAGADO  ====\n\n");
+    }
+    else{   
+        printf(" = %d =\n %s - %s %.2f - %.2f\n\n", H[key]->key, H[key]->city.cidade, H[key]->city.estado, H[key]->GPS.la, H[key]->GPS.lo);
     }
 }

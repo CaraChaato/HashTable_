@@ -14,10 +14,19 @@ int main() {
     for (int i = 0; i < SIZE; i++) {
         inserir(H, d+i, divisao);
     }  
-    //printData(d);
-    remover(H, d, divisao);
+    //printHash(H);
+    // Alguns testes 
+    int key = buscar(H, 110007, divisao);
+    printItem(H,key);
+    printf("\n%d\n\n", key);
+    key = buscar(H, 110001, divisao);
+    printItem(H,key);
+    printf("\n%d\n\n", key);
+
+
+    remover(H, 110007, divisao);
+    remover(H, 110001, divisao);
     printHash(H);
-    inserir(H, d, divisao);
-    printHash(H);
+
     return 0;
 }
