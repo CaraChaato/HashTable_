@@ -5,6 +5,7 @@
 #include <math.h> // Biblioteca para operações matemáticas
 #include <stdio.h> // Entrada e Saída de Dados
 #include <stdlib.h> // Emulador do prompt do sistema 
+
 /**
  * 1/4 do espaço será utilizado para a tabela Hash
  * -> 0 ~ 255
@@ -30,7 +31,7 @@ void init(hash &H) {
 }
 
 /**
- * Função que Insere um Elemento na Tabela 
+ * Insere elementos na tabela Hash
  * @param H 
  * @param d 
  * @param funcHash 
@@ -53,7 +54,7 @@ int inserir(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
      * Ele basicamente usa uma parte da tabela como um vetor normal para alocar estruturas que tenham colidido
      */
     else{
-        for(int i = (SIZE/4); i < SIZE; i++){
+        for(int i = ((SIZE/4) * 3); i < SIZE; i++){
             if(H[i] == 0 || H[i]->key == -1){
                 H[i] = copy;
                 break;
@@ -91,7 +92,7 @@ int buscar(hash H, int chave, int (*funcHash)(dataItem *)){
     }
     // Se a key for -1 ela irá buscar na segunda parte da tabela
     else if (H[key] != 0) {
-        for (int i = (SIZE/4); i < SIZE; i++){
+        for (int i = ((SIZE/4) * 3); i < SIZE; i++){
             // Se chegar a uma posição vazia antes de achar, retorna -1 (erro)
             if (H[i] == 0){
                 printf("\nItem não encontrado\n");
@@ -128,7 +129,7 @@ int remover(hash H, int chave, int (*funcHash)(dataItem *)) {
     // delete purge; //linux
     
     free(purge); // windows e linux 
-    //H[key] = 0; // Queria fzr isso mas por algum motivo dá errado
+    H[key] = (dataItem*) malloc(sizeof(dataItem));
     H[key]->key = -1; // Apagar é uma palavra mt forte, tá mais pra sobrescrever
     return 0; // Retorna 0 se der tudo certo
 }
@@ -142,7 +143,7 @@ int remover(hash H, int chave, int (*funcHash)(dataItem *)) {
  */
 int divisao(dataItem *d) {
     // O corpo principal da tabela será até a posição 255, o restante será para tratamento
-    return d->key % (SIZE/4);
+    return d->key % ((SIZE/4) * 3);
 }
 
 
@@ -175,7 +176,7 @@ int multiplicacao(dataItem *d) {
  */
 void printHash(hash dado){
     printf("\n  ==== CORPO PRINCIPAL DA TABELA HASH ====  \n\n\n");
-    for (int i = 0; i < (SIZE/4); i++) {
+    for (int i = 0; i < ((SIZE/4) * 3); i++) {
         if(dado[i] == 0){
             printf("       ====   SLOT VAZIO   ====\n\n");
         }
@@ -189,7 +190,7 @@ void printHash(hash dado){
         }
     }
     printf("\n\n  ====       TRATAMENTO DE COLISAO       ====\n\n\n");
-    for (int i = (SIZE/4); i < SIZE; i++) {
+    for (int i = ((SIZE/4) * 3); i < SIZE; i++) {
         if(dado[i] == 0){
             printf("       ====   SLOT VAZIO   ====\n\n");
         }

@@ -23,10 +23,17 @@ int main() {
     key = buscar(H, 110001, divisao);
     printItem(H,key);
     printf("\n%d\n\n", key);
-
+    key = buscar(H, 110008, divisao);
+    printItem(H,key);
+    printf("\n%d\n\n", key);
+    key = buscar(H, 110015, divisao);
+    printItem(H,key);
+    printf("\n%d\n\n", key);
 
     remover(H, 110007, divisao);
     remover(H, 110001, divisao);
+    remover(H, 110008, divisao);
+    remover(H, 110015, divisao);
     printHash(H);
 
     return 0;
