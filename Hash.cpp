@@ -7,18 +7,25 @@
 #include <stdlib.h> // Emulador do prompt do sistema 
 
 /**
- * 1/4 do espaço será utilizado para a tabela Hash
- * -> 0 ~ 255
- * Os 3/4 restantes do espaço serão empregados para o tratamento de colisão
- * -> 256 ~ 1023
+ * 3/4 do espaço será utilizado para a tabela Hash
+ * Os 1/4 restantes do espaço serão empregados para o tratamento de colisão
  */
-#define SIZE 16
+#define SIZE 64
 
 /**
  * Criação de um vetor de ponteiros chamado 'hash' do tipo dataItem
  * Essa variável será a própria Tabela Hash
  */
 typedef dataItem *hash[SIZE];
+
+// Funções
+void init(hash &H);
+int inserir(hash H, dataItem *d, int (*funcHash)(dataItem *));
+int buscar(hash H, int chave, int (*funcHash)(dataItem *));
+int remover(hash H, int chave, int (*funcHash)(dataItem *));
+int divisao(dataItem *d);
+void printHash(hash dado);
+void printItem(hash H, int key);
 
 /**
  * Função que inicia a Tabela Hash
@@ -40,12 +47,12 @@ void init(hash &H) {
 int inserir(hash H, dataItem *d, int (*funcHash)(dataItem *)) { 
     // Variável inteira que irá receber o resultado da função Hash
     int key = funcHash(d); 
-    // Cópia do item que será inserido
-    dataItem *copy = (dataItem*)malloc(sizeof(dataItem));
-    *copy = *d;
 
     // Se a estrutura estiver vazia, a cópia do item será guardada nela
     if (H[key] == 0 || H[key]->key == -1) {
+        // Cópia do item que será inserido
+        dataItem *copy = (dataItem*)malloc(sizeof(dataItem));
+        *copy = *d;      
         H[key] = copy;
         return 0; // Retorna 0 se der certo
     }
@@ -53,14 +60,14 @@ int inserir(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
      * Tratamento de Colisão Encadeado Interior
      * Ele basicamente usa uma parte da tabela como um vetor normal para alocar estruturas que tenham colidido
      */
-    else{
-        for(int i = ((SIZE/4) * 3); i < SIZE; i++){
-            if(H[i] == 0 || H[i]->key == -1){
-                H[i] = copy;
-                break;
-            }
+    for(int i = ((SIZE/4) * 3); i < SIZE; i++){
+        if(H[i] == 0 || H[i]->key == -1){
+            // Cópia do item que será inserido
+            dataItem *copy = (dataItem*)malloc(sizeof(dataItem));
+            *copy = *d; 
+            H[i] = copy;
+            return 0; // Retorna 0 se der certo
         }
-        return 0; // Retorna 0 se der certo
     }
     return -1; // Retorna -1 se der errado
 }
@@ -134,8 +141,6 @@ int remover(hash H, int chave, int (*funcHash)(dataItem *)) {
     return 0; // Retorna 0 se der tudo certo
 }
 
-
-
 /**
  * Função Hash da Divisão
  * @param d 
@@ -146,30 +151,6 @@ int divisao(dataItem *d) {
     return d->key % ((SIZE/4) * 3);
 }
 
-
-// Varíavel de um número inteiro bem bem grande e sem sinal
-typedef unsigned long long int bigNumber; 
-
-/**
- * Função Hash de Multiplicação
- * Não vou nem tentar comentar isso
- * O importante é que ela também retorna uma posição na tabela com base na chave
- */
-int multiplicacao(dataItem *d) {
-    bigNumber key = (bigNumber)d->key;
-    key *= key;
-    int digits = ceil(log2((bigNumber)540000 * 540000));
-    int signif = ceil(log2(SIZE - 1));
-    int remover = digits - signif;
-    int digitMask = (int)ceil(float(remover) / 2);
-    bigNumber mask = ((SIZE-1) << digitMask);
-    key = key & mask;
-    key = (key >> digitMask);
-    return key;
-    // Vontade de chorar lendo isso (*>﹏<*)
-}
-#endif
-
 /**
  * Função que imprime a tabela Hash
  * @param dado 
@@ -178,13 +159,11 @@ void printHash(hash dado){
     printf("\n  ==== CORPO PRINCIPAL DA TABELA HASH ====  \n\n\n");
     for (int i = 0; i < ((SIZE/4) * 3); i++) {
         if(dado[i] == 0){
-            printf("       ====   SLOT VAZIO   ====\n\n");
+            printf("    ====   SLOT VAZIO   ====\n\n");
         }
-        
-        if(dado[i]->key == -1){
-            printf("       ====  SLOT APAGADO  ====\n\n");
+        else if(dado[i]->key == -1){
+            printf("    ====  SLOT APAGADO  ====\n\n");
         }
-        
         else{   
             printf(" = %d =\n %s - %s %.2f - %.2f\n\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
         }
@@ -192,13 +171,11 @@ void printHash(hash dado){
     printf("\n\n  ====       TRATAMENTO DE COLISAO       ====\n\n\n");
     for (int i = ((SIZE/4) * 3); i < SIZE; i++) {
         if(dado[i] == 0){
-            printf("       ====   SLOT VAZIO   ====\n\n");
+            printf("    ====   SLOT VAZIO   ====\n\n");
         }
-        
-        if(dado[i]->key == -1){
-            printf("       ====  SLOT APAGADO  ====\n\n");
+        else if(dado[i]->key == -1){
+            printf("    ====  SLOT APAGADO  ====\n\n");
         }
-        
         else{   
             printf(" = %d =\n %s - %s %.2f - %.2f\n\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
         }
@@ -207,12 +184,14 @@ void printHash(hash dado){
 
 void printItem(hash H, int key){
     if(H[key] == 0){
-        printf("       ====   SLOT VAZIO   ====\n\n");
+        printf("    ====   SLOT VAZIO   ====\n\n");
     }
-    if(H[key]->key == -1){
-        printf("       ====  SLOT APAGADO  ====\n\n");
+    else if(H[key]->key == -1){
+        printf("    ====  SLOT APAGADO  ====\n\n");
     }
     else{   
         printf(" = %d =\n %s - %s %.2f - %.2f\n\n", H[key]->key, H[key]->city.cidade, H[key]->city.estado, H[key]->GPS.la, H[key]->GPS.lo);
     }
 }
+
+#endif

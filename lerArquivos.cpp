@@ -4,6 +4,12 @@
 #include "cidade.cpp" // Estrutura da cidade
 #define MAX 5570
 
+// Funções
+dataItem *getItens(cidade *cities, gps *local);
+cidade *getCidades(char *arquivo);
+gps *getGps(char *localizacoes);
+void printData(dataItem *dado);
+
 /**
  * @brief Recebe as Estruturas City e Gps, e retorna uma estrutura dataItem
  * @param cities 

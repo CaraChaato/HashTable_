@@ -1,6 +1,20 @@
 #include "Hash.cpp"
 #include "lerArquivos.cpp"
 
+int inserirTodos(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
+    for (int i = 0; i < SIZE; i++) {
+        inserir(H, d+i, funcHash);
+    }
+    return -1;
+}
+
+int removerTodos(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
+    for (int i = 0; i < SIZE; i++) {
+        remover(H, d[i].key, funcHash);
+    }
+    return -1;
+}
+
 int main() {
     char *arquivo1 = (char *)"bancoDeDados/legenda.txt";
     cidade *cities = getCidades(arquivo1);
@@ -10,31 +24,21 @@ int main() {
 
     hash H;
     init(H);
-    
-    for (int i = 0; i < SIZE; i++) {
-        inserir(H, d+i, divisao);
-    }  
-    //printHash(H);
-    
-    // Alguns testes 
-    int key = buscar(H, 110007, divisao);
-    printItem(H,key);
-    printf("\n%d\n\n", key);
-    key = buscar(H, 110001, divisao);
-    printItem(H,key);
-    printf("\n%d\n\n", key);
-    key = buscar(H, 110008, divisao);
-    printItem(H,key);
-    printf("\n%d\n\n", key);
-    key = buscar(H, 110015, divisao);
-    printItem(H,key);
-    printf("\n%d\n\n", key);
-
-    remover(H, 110007, divisao);
-    remover(H, 110001, divisao);
-    remover(H, 110008, divisao);
-    remover(H, 110015, divisao);
+    inserirTodos(H, d, divisao);
     printHash(H);
+
+    int key = buscar(H, 110003, divisao);
+    printf("\n\n");
+    printItem(H, key);
+    printf("\n\n");
+
+    remover(H, 110003, divisao);
+    printf("\n\n");
+
+    printHash(H);
+    
+    printf("\n%d\n", (SIZE/4) * 3);
+    printf("\nDeu tudo certo, confia!\n\n");
 
     return 0;
 }
