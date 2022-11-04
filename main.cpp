@@ -1,6 +1,8 @@
 #include "Hash.cpp"
 #include "lerArquivos.cpp"
 
+//este
+
 int inserirTodos(hash H, dataItem *d, int (*funcHash)(dataItem *)) {
     for (int i = 0; i < SIZE; i++) {
         inserir(H, d+i, funcHash);
