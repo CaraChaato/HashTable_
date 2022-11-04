@@ -6,6 +6,8 @@
 #include <stdio.h> // Entrada e Saída de Dados
 #include <stdlib.h> // Emulador do prompt do sistema 
 
+
+
 /**
  * 3/4 do espaço será utilizado para a tabela Hash
  * Os 1/4 restantes do espaço serão empregados para o tratamento de colisão
@@ -156,6 +158,8 @@ int divisao(dataItem *d) {
  * @param dado 
  */
 void printHash(hash dado){
+    FILE *tabelinhadenoiz;
+    tabelinhadenoiz = fopen("Tabela_hash_Ordenada.txt","w");
     printf("\n  ==== CORPO PRINCIPAL DA TABELA HASH ====  \n\n\n");
     for (int i = 0; i < ((SIZE/4) * 3); i++) {
         if(dado[i] == 0){
@@ -166,6 +170,7 @@ void printHash(hash dado){
         }
         else{   
             printf(" = %d =\n %s - %s %.2f - %.2f\n\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
+            fprintf(tabelinhadenoiz," = %d =\n %s - %s %.2f - %.2f\n\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
         }
     }
     printf("\n\n  ====       TRATAMENTO DE COLISAO       ====\n\n\n");
@@ -178,8 +183,10 @@ void printHash(hash dado){
         }
         else{   
             printf(" = %d =\n %s - %s %.2f - %.2f\n\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
+            fprintf(tabelinhadenoiz," = %d =\n %s - %s %.2f - %.2f\n\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
         }
     }
+    fclose(tabelinhadenoiz);
 }
 
 void printItem(hash H, int key){
