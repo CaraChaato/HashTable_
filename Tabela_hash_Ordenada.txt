@@ -1,0 +1,101 @@
+  ==== CORPO PRINCIPAL DA TABELA HASH ====  
+
+
+ 0 -> = 110004 =
+   Cidade : Cacoal
+   Estado: RO
+   Latitude: -11.43
+   Longitude -61.44
+
+ 1 -> = 110005 =
+   Cidade : Cerejeiras
+   Estado: RO
+   Latitude: -13.18
+   Longitude -60.81
+
+ 2 -> ====  SLOT APAGADO  ====
+
+ 3 -> = 110007 =
+   Cidade : Corumbiara
+   Estado: RO
+   Latitude: -12.96
+   Longitude -60.88
+
+ 4 -> = 110008 =
+   Cidade : Costa Marques
+   Estado: RO
+   Latitude: -12.44
+   Longitude -64.22
+
+ 5 -> = 110009 =
+   Cidade : Espigão d`Oeste
+   Estado: RO
+   Latitude: -11.52
+   Longitude -61.01
+
+ 6 -> = 110010 =
+   Cidade : Guajará-Mirim
+   Estado: RO
+   Latitude: -10.78
+   Longitude -65.33
+
+ 7 -> = 110011 =
+   Cidade : Jaru
+   Estado: RO
+   Latitude: -10.43
+   Longitude -62.46
+
+ 8 -> = 110012 =
+   Cidade : Ji-Paraná
+   Estado: RO
+   Latitude: -10.88
+   Longitude -61.94
+
+ 9 -> = 110001 =
+   Cidade : Alta Floresta d`Oeste
+   Estado: RO
+   Latitude: -11.92
+   Longitude -61.99
+
+ 10 -> = 110002 =
+   Cidade : Ariquemes
+   Estado: RO
+   Latitude: -9.91
+   Longitude -63.04
+
+ 11 -> = 110003 =
+   Cidade : Cabixi
+   Estado: RO
+   Latitude: -13.49
+   Longitude -60.54
+
+
+  ====       TRATAMENTO DE COLISAO       ====
+
+
+ 12 -> = 110013 =
+   Cidade : Machadinho d`Oeste
+   Estado: RO
+   Latitude: -9.44
+   Longitude -61.98
+
+ 13 -> = 110014 =
+   Cidade : Nova Brasilândia d`Oeste
+   Estado: RO
+   Latitude: -11.72
+   Longitude -62.33
+
+ 14 -> = 110015 =
+   Cidade : Ouro Preto do Oeste
+   Estado: RO
+   Latitude: -10.71
+   Longitude -62.24
+
+ 15 -> = 110018 =
+   Cidade : Pimenta Bueno
+   Estado: RO
+   Latitude: -11.67
+   Longitude -61.19
+
+
+  ==========================================

@@ -31,16 +31,21 @@ int main() {
     //system("pause");
     //system("cls");
 
-    int key = buscar(H, 110003, divisao);
-    printf("\n\n  Item Buscado:\n\n");
-    printItem(H, key);
-    printf("\n\n");
+    int key = buscar(H, 110006, divisao);
+    if (key == -1) {
+        printf("\nItem não encontrado na Busca\n");
+    }
+    else {
+        printf("\n\n  Item Buscado:\n\n");
+        printItem(H, key);
+        printf("\n\n");
+        remover(H, 110006, divisao);
+        printf("\n\n");
+    }
 
     //system("pause");
     //system("cls");
 
-    remover(H, 110003, divisao);
-    printf("\n\n");
 
     printHash(H);
     
