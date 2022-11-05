@@ -28,18 +28,29 @@ int main() {
     inserirTodos(H, d, divisao);
     printHash(H);
 
+    //system("pause");
+    //system("cls");
+
     int key = buscar(H, 110003, divisao);
-    printf("\n\n");
+    printf("\n\n  Item Buscado:\n\n");
     printItem(H, key);
     printf("\n\n");
+
+    //system("pause");
+    //system("cls");
 
     remover(H, 110003, divisao);
     printf("\n\n");
 
     printHash(H);
     
-    printf("\n%d\n", (SIZE/4) * 3);
-    printf("\nDeu tudo certo, confia!\n\n");
+    //system("pause");
+    //system("cls");
+
+    //removerTodos(H, d, divisao);
+    
+    saveData(H);
+    printf("\nFim da Execução!\n");
 
     return 0;
 }

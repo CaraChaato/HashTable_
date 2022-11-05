@@ -3,7 +3,7 @@
 
 #include "cidade.cpp" // Chamada da função que contém as estuturas salvas
 #include <math.h> // Biblioteca para operações matemáticas
-#include <stdio.h> // Entrada e Saída de Dados
+#include <stdio.h> // Entrada e Saída de Hs
 #include <stdlib.h> // Emulador do prompt do sistema 
 
 
@@ -12,7 +12,7 @@
  * 3/4 do espaço será utilizado para a tabela Hash
  * Os 1/4 restantes do espaço serão empregados para o tratamento de colisão
  */
-#define SIZE 64
+#define SIZE 16
 
 /**
  * Criação de um vetor de ponteiros chamado 'hash' do tipo dataItem
@@ -26,8 +26,9 @@ int inserir(hash H, dataItem *d, int (*funcHash)(dataItem *));
 int buscar(hash H, int chave, int (*funcHash)(dataItem *));
 int remover(hash H, int chave, int (*funcHash)(dataItem *));
 int divisao(dataItem *d);
-void printHash(hash dado);
+void printHash(hash H);
 void printItem(hash H, int key);
+void saveData(hash H);
 
 /**
  * Função que inicia a Tabela Hash
@@ -139,7 +140,7 @@ int remover(hash H, int chave, int (*funcHash)(dataItem *)) {
     
     free(purge); // windows e linux 
     H[key] = (dataItem*) malloc(sizeof(dataItem));
-    H[key]->key = -1; // Apagar é uma palavra mt forte, tá mais pra sobrescrever
+    H[key]->key = -1; // O item apagado ganha a chave -1, para indicar que algum item já esteve ali
     return 0; // Retorna 0 se der tudo certo
 }
 
@@ -155,50 +156,84 @@ int divisao(dataItem *d) {
 
 /**
  * Função que imprime a tabela Hash
- * @param dado 
+ * @param H 
  */
-void printHash(hash dado){
-    FILE *tabelinhadenoiz;
-    tabelinhadenoiz = fopen("Tabela_hash_Ordenada.txt","w");
+void printHash(hash H){
     printf("\n  ==== CORPO PRINCIPAL DA TABELA HASH ====  \n\n\n");
     for (int i = 0; i < ((SIZE/4) * 3); i++) {
-        if(dado[i] == 0){
-            printf("    ====   SLOT VAZIO   ====\n\n");
+        if(H[i] == 0){
+            printf(" %d -> ====   SLOT VAZIO   ====\n\n", i); // Caso o slot esteja vazio
         }
-        else if(dado[i]->key == -1){
-            printf("    ====  SLOT APAGADO  ====\n\n");
+        else if(H[i]->key == -1){
+            printf(" %d -> ====  SLOT APAGADO  ====\n\n", i);  // Caso o slot tenha sido apagado
         }
         else{   
-            printf(" = %d =\n %s - %s %.2f - %.2f\n\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
-            fprintf(tabelinhadenoiz," = %d =\n %s - %s %.2f - %.2f\n\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
+            printf(" %d -> = %d =\n   Cidade : %s   Estado: %s\n   Latitude: %.2f\n   Longitude %.2f\n\n", i, H[i]->key, H[i]->city.cidade, H[i]->city.estado, H[i]->GPS.la, H[i]->GPS.lo);
         }
     }
     printf("\n\n  ====       TRATAMENTO DE COLISAO       ====\n\n\n");
     for (int i = ((SIZE/4) * 3); i < SIZE; i++) {
-        if(dado[i] == 0){
-            printf("    ====   SLOT VAZIO   ====\n\n");
+        if(H[i] == 0){
+            printf(" %d -> ====   SLOT VAZIO   ====\n\n", i); // Caso o slot esteja vazio
         }
-        else if(dado[i]->key == -1){
-            printf("    ====  SLOT APAGADO  ====\n\n");
+        else if(H[i]->key == -1){
+            printf(" %d -> ====  SLOT APAGADO  ====\n\n", i);  // Caso o slot tenha sido apagado
         }
         else{   
-            printf(" = %d =\n %s - %s %.2f - %.2f\n\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
-            fprintf(tabelinhadenoiz," = %d =\n %s - %s %.2f - %.2f\n\n", dado[i]->key, dado[i]->city.cidade, dado[i]->city.estado, dado[i]->GPS.la, dado[i]->GPS.lo);
+            printf(" %d -> = %d =\n   Cidade : %s   Estado: %s\n   Latitude: %.2f\n   Longitude %.2f\n\n", i, H[i]->key, H[i]->city.cidade, H[i]->city.estado, H[i]->GPS.la, H[i]->GPS.lo);
         }
     }
-    fclose(tabelinhadenoiz);
 }
 
+/**
+ * Função que recebe a tabela e a posição de um item e imprime o item
+ * @param H 
+ * @param key 
+ */
 void printItem(hash H, int key){
     if(H[key] == 0){
-        printf("    ====   SLOT VAZIO   ====\n\n");
+        printf(" %d -> ====   SLOT VAZIO   ====\n\n", key); // Caso o slot esteja vazio
     }
     else if(H[key]->key == -1){
-        printf("    ====  SLOT APAGADO  ====\n\n");
+        printf(" %d -> ====  SLOT APAGADO  ====\n\n", key); // Caso o slot tenha sido apagado
     }
     else{   
-        printf(" = %d =\n %s - %s %.2f - %.2f\n\n", H[key]->key, H[key]->city.cidade, H[key]->city.estado, H[key]->GPS.la, H[key]->GPS.lo);
+        printf(" %d -> = %d =\n   Cidade : %s   Estado: %s\n   Latitude: %.2f\n   Longitude %.2f\n\n", key, H[key]->key, H[key]->city.cidade, H[key]->city.estado, H[key]->GPS.la, H[key]->GPS.lo);
     }
 }
 
+/**
+ * Função salva a tabela Hash em um arquivo
+ * @param H 
+ */
+void saveData(hash H){
+    FILE *File_Hash;
+    File_Hash = fopen("Tabela_hash_Ordenada.txt","w");
+    fprintf(File_Hash,"  ==== CORPO PRINCIPAL DA TABELA HASH ====  \n\n\n");
+    for (int i = 0; i < ((SIZE/4) * 3); i++) {
+        if(H[i] == 0){
+            fprintf(File_Hash," %d -> ====   SLOT VAZIO   ====\n\n", i);
+        }
+        else if(H[i]->key == -1){
+            fprintf(File_Hash," %d -> ====  SLOT APAGADO  ====\n\n", i);
+        }
+        else{   
+            fprintf(File_Hash," %d -> = %d =\n   Cidade : %s   Estado: %s\n   Latitude: %.2f\n   Longitude %.2f\n\n", i, H[i]->key, H[i]->city.cidade, H[i]->city.estado, H[i]->GPS.la, H[i]->GPS.lo);
+        }
+    }
+    fprintf(File_Hash,"\n  ====       TRATAMENTO DE COLISAO       ====\n\n\n");
+    for (int i = ((SIZE/4) * 3); i < SIZE; i++) {
+        if(H[i] == 0){
+            fprintf(File_Hash," %d -> ====   SLOT VAZIO   ====\n\n", i);
+        }
+        else if(H[i]->key == -1){
+            fprintf(File_Hash," %d -> ====  SLOT APAGADO  ====\n\n", i);
+        }
+        else{   
+            fprintf(File_Hash," %d -> = %d =\n   Cidade : %s   Estado: %s\n   Latitude: %.2f\n   Longitude %.2f\n\n", i, H[i]->key, H[i]->city.cidade, H[i]->city.estado, H[i]->GPS.la, H[i]->GPS.lo);
+        }
+    }
+    fprintf(File_Hash, "\n  ==========================================\n");
+    fclose(File_Hash);
+}
 #endif
